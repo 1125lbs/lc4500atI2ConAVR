@@ -251,7 +251,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("enable pattern display");
 		uart_puts("1\r\n");
 	}
-	_delay_ms(100);
+	
 		
 	// 2. Set pattern display mode to flash image or external video
 	u8WriteBuffer[0] = 0x03;
@@ -261,7 +261,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("Write data input source 0x03");
 		uart_puts("2\r\n");
 	}
-	_delay_ms(100);
+	_delay_ms(100); // needed, don't remove this line
 
 	// 3.0. Ensure pattern sequence has been stopped
 	u8WriteBuffer[0] = 0x00;
@@ -271,7 +271,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("Stop the pattern sequence");
 		uart_puts("3\r\n");
 	}
-	_delay_ms(100);
+	
 	// 3.1. set the number of patterns
 	
 	u8WriteBuffer[0] = 0x01; // 0x17 = 23; value+1 as number of LUT entries
@@ -285,7 +285,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set the number of patterns");
 		uart_puts("3.1\r\n");
 	}
-	_delay_ms(100);
+	
 	
 	// 4. set the pattern trigger mode
 	u8WriteBuffer[0] = 0x01; // internal trigger
@@ -295,8 +295,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set the pattern trigger mode");
 		uart_puts("4\r\n");
 	}
-	_delay_ms(100);
-	
+		
 	// 5. set the exposure and frame rate (four bytes for each)
 	
 	// for 100000us
@@ -318,7 +317,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set exposure and frame rate");
 		uart_puts("5\r\n");
 	}
-	_delay_ms(100);
+	
 	// 6. set up the image indexes for using flash images
 	
 	// 6.a. open the mailbox for image indexes configuration
@@ -329,8 +328,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("open the mailbox for image index");
 		uart_puts("6.a\r\n");
 	}
-	_delay_ms(100);
-	
+		
 	// 6.b. set mailbox offset
 	u8WriteBuffer[0] = 0x00;
 	u8WriteStatus = DLPWriteByte(patternDisplayMailboxOffsetWriteOnly, 1, &u8WriteBuffer[0]); // 0x76
@@ -339,7 +337,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set the mailbox offset");
 		uart_puts("b\r\n");
 	}
-	_delay_ms(100);
+
 		
 	// 6.c. set image indexes
 	u8WriteBuffer[0] = 0x08;
@@ -349,8 +347,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set image indexes");
 		uart_puts("c\r\n");
 	}
-	_delay_ms(100);
-		
+			
 	// 6.d. close the mailbox
 	u8WriteBuffer[0] = 0x00;
 	u8WriteStatus = DLPWriteByte(patternDisplayLUTAccessWriteOnly, 1, &u8WriteBuffer[0]); // 0x77
@@ -359,8 +356,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("close the mailbox for image index");
 		uart_puts("d\r\n");
 	}
-	_delay_ms(100);
-	
+		
 	// 7. set up the LUT
 	// 7.a open mailbox for pattern definition 
 	u8WriteBuffer[0] = 0x02;
@@ -370,8 +366,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("open the mailbox for pattern");
 		uart_puts("7.a\r\n");
 	}
-	_delay_ms(100);
-	
+		
 	// 7.b set mailbox offset 
 	u8WriteBuffer[0] = 0x00;
 	u8WriteStatus = DLPWriteByte(patternDisplayMailboxOffsetWriteOnly, 1, &u8WriteBuffer[0]); // 0x76
@@ -380,7 +375,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set the mailbox offset");
 		uart_puts("b\r\n");
 	}
-	_delay_ms(100);
+	
 	
 	// 7.c fill pattern sequence data 
 	// (i) Byte 0, b1:0- choose trigger: internal (0x00), external positive (0x01), external negative (0x02),
@@ -412,8 +407,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("fill pattern data");
 		uart_puts("c\r\n");
 	}	
-	_delay_ms(100);
-	
+		
 	// 7.d close mailbox
 	u8WriteBuffer[0] = 0x00;
 	u8WriteStatus = DLPWriteByte(patternDisplayLUTAccessWriteOnly, 1, &u8WriteBuffer[0]);  // 0x77
@@ -422,7 +416,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("close the mailbox for pattern");
 		uart_puts("d\r\n");
 	}
-	_delay_ms(100);
+	
 	
 	// 7.e  write dummy data for validation
 	u8WriteBuffer[0] = 0x00;
@@ -432,7 +426,8 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("write dummy data for validation");
 		uart_puts("e\r\n");
 	}
-	_delay_ms(1000);
+	
+	_delay_ms(1000); // needed, don't remove this line, don't change the time
 	// 8. Execute the validation command
 	
 	uint8_t validationReadResult;
@@ -451,7 +446,6 @@ int  DLPPatternDisplayModeSetup()
 			uart_puts("\r\n");
 		}
 	}	
-	_delay_ms(100);
 	
 	// 9. Read statuses
 	
@@ -481,7 +475,7 @@ int  DLPPatternDisplayModeSetup()
 	}
 	
 	
-	_delay_ms(1000);
+	_delay_ms(1000); // needed, don't remove this line
 	
 	// 10. start display patterns
 	u8WriteBuffer[0] = 0x02;
