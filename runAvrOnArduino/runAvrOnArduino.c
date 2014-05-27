@@ -241,7 +241,7 @@ int  DLPPatternDisplayModeSetup()
 {
 	uint8_t u8ReadStatus;
 	uint8_t u8WriteStatus;
-	uint8_t u8WriteBuffer[100];
+	uint8_t u8WriteBuffer[10];
 	
 	// 1. Enable pattern display mode
 	u8WriteBuffer[0] = 0x01;
@@ -251,6 +251,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("enable pattern display");
 		uart_puts("1\r\n");
 	}
+	_delay_ms(100);
 		
 	// 2. Set pattern display mode to flash image or external video
 	u8WriteBuffer[0] = 0x03;
@@ -260,7 +261,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("Write data input source 0x03");
 		uart_puts("2\r\n");
 	}
-	
+	_delay_ms(100);
 
 	// 3.0. Ensure pattern sequence has been stopped
 	u8WriteBuffer[0] = 0x00;
@@ -270,12 +271,12 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("Stop the pattern sequence");
 		uart_puts("3\r\n");
 	}
-	
+	_delay_ms(100);
 	// 3.1. set the number of patterns
 	
-	u8WriteBuffer[0] = 0x17; // 0x17 = 23; value+1 as number of LUT entries
+	u8WriteBuffer[0] = 0x01; // 0x17 = 23; value+1 as number of LUT entries
 	u8WriteBuffer[1] = 0x01; // pattern repeat
-	u8WriteBuffer[2] = 0x17; // 0x17 = 23; value+1 as number of patterns
+	u8WriteBuffer[2] = 0x01; // 0x17 = 23; value+1 as number of patterns, irrelevant if repeated
 	u8WriteBuffer[3] = 0x00; // 0x00 = 0; value+1 as number of splash images used
 	
 	u8WriteStatus = DLPWriteByte(patternDisplayLUTControlWrite, 4, &u8WriteBuffer[0]); // 0x75
@@ -284,7 +285,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set the number of patterns");
 		uart_puts("3.1\r\n");
 	}
-	
+	_delay_ms(100);
 	
 	// 4. set the pattern trigger mode
 	u8WriteBuffer[0] = 0x01; // internal trigger
@@ -294,6 +295,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set the pattern trigger mode");
 		uart_puts("4\r\n");
 	}
+	_delay_ms(100);
 	
 	// 5. set the exposure and frame rate (four bytes for each)
 	
@@ -316,7 +318,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set exposure and frame rate");
 		uart_puts("5\r\n");
 	}
-	
+	_delay_ms(100);
 	// 6. set up the image indexes for using flash images
 	
 	// 6.a. open the mailbox for image indexes configuration
@@ -327,6 +329,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("open the mailbox for image index");
 		uart_puts("6.a\r\n");
 	}
+	_delay_ms(100);
 	
 	// 6.b. set mailbox offset
 	u8WriteBuffer[0] = 0x00;
@@ -335,7 +338,9 @@ int  DLPPatternDisplayModeSetup()
 	{
 		//uart_puts("set the mailbox offset");
 		uart_puts("b\r\n");
-	}	
+	}
+	_delay_ms(100);
+		
 	// 6.c. set image indexes
 	u8WriteBuffer[0] = 0x08;
 	u8WriteStatus = DLPWriteByte(patternDisplayImageIndexWriteOnly, 1, &u8WriteBuffer[0]); // 0x78
@@ -343,7 +348,9 @@ int  DLPPatternDisplayModeSetup()
 	{
 		//uart_puts("set image indexes");
 		uart_puts("c\r\n");
-	}	
+	}
+	_delay_ms(100);
+		
 	// 6.d. close the mailbox
 	u8WriteBuffer[0] = 0x00;
 	u8WriteStatus = DLPWriteByte(patternDisplayLUTAccessWriteOnly, 1, &u8WriteBuffer[0]); // 0x77
@@ -352,6 +359,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("close the mailbox for image index");
 		uart_puts("d\r\n");
 	}
+	_delay_ms(100);
 	
 	// 7. set up the LUT
 	// 7.a open mailbox for pattern definition 
@@ -362,6 +370,8 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("open the mailbox for pattern");
 		uart_puts("7.a\r\n");
 	}
+	_delay_ms(100);
+	
 	// 7.b set mailbox offset 
 	u8WriteBuffer[0] = 0x00;
 	u8WriteStatus = DLPWriteByte(patternDisplayMailboxOffsetWriteOnly, 1, &u8WriteBuffer[0]); // 0x76
@@ -370,6 +380,7 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("set the mailbox offset");
 		uart_puts("b\r\n");
 	}
+	_delay_ms(100);
 	
 	// 7.c fill pattern sequence data 
 	// (i) Byte 0, b1:0- choose trigger: internal (0x00), external positive (0x01), external negative (0x02),
@@ -388,108 +399,21 @@ int  DLPPatternDisplayModeSetup()
 	// pattern 1
 	u8WriteBuffer[0] = 0x00;
 	u8WriteBuffer[1] = 0x21;
-	u8WriteBuffer[2] = 0x00;
+	u8WriteBuffer[2] = 0x06;
 	// pattern 2
 	u8WriteBuffer[3] = 0x04;
 	u8WriteBuffer[4] = 0x21;
-	u8WriteBuffer[5] = 0x00;
-	// pattern 3
-	u8WriteBuffer[6] = 0x08;
-	u8WriteBuffer[7] = 0x21;
-	u8WriteBuffer[8] = 0x00;
-	// pattern 4
-	u8WriteBuffer[9] = 0x0c;
-	u8WriteBuffer[10] = 0x21;
-	u8WriteBuffer[11] = 0x00;
-	// pattern 5
-	u8WriteBuffer[12] = 0x10;
-	u8WriteBuffer[13] = 0x21;
-	u8WriteBuffer[14] = 0x00;
-	// pattern 6
-	u8WriteBuffer[15] = 0x14;
-	u8WriteBuffer[16] = 0x21;
-	u8WriteBuffer[17] = 0x00;
-	// pattern 7
-	u8WriteBuffer[18] = 0x18;
-	u8WriteBuffer[19] = 0x21;
-	u8WriteBuffer[20] = 0x00;
-	// pattern 8
-	u8WriteBuffer[21] = 0x1c;
-	u8WriteBuffer[22] = 0x21;
-	u8WriteBuffer[23] = 0x00;
-	// pattern 9
-	u8WriteBuffer[24] = 0x20;
-	u8WriteBuffer[25] = 0x21;
-	u8WriteBuffer[26] = 0x00;
-	// pattern 10
-	u8WriteBuffer[27] = 0x24;
-	u8WriteBuffer[28] = 0x21;
-	u8WriteBuffer[29] = 0x00;
-	// pattern 11
-	u8WriteBuffer[30] = 0x28;
-	u8WriteBuffer[31] = 0x21;
-	u8WriteBuffer[32] = 0x00;
-	// pattern 12
-	u8WriteBuffer[33] = 0x2c;
-	u8WriteBuffer[34] = 0x21;
-	u8WriteBuffer[35] = 0x00;
-	// pattern 13
-	u8WriteBuffer[36] = 0x30;
-	u8WriteBuffer[37] = 0x21;
-	u8WriteBuffer[38] = 0x00;
-	// pattern 14
-	u8WriteBuffer[39] = 0x34;
-	u8WriteBuffer[40] = 0x21;
-	u8WriteBuffer[41] = 0x00;
-	// pattern 15
-	u8WriteBuffer[42] = 0x38;
-	u8WriteBuffer[43] = 0x21;
-	u8WriteBuffer[44] = 0x00;
-	// pattern 16
-	u8WriteBuffer[45] = 0x3c;
-	u8WriteBuffer[46] = 0x21;
-	u8WriteBuffer[47] = 0x00;
-	// pattern 17
-	u8WriteBuffer[48] = 0x40;
-	u8WriteBuffer[49] = 0x21;
-	u8WriteBuffer[50] = 0x00;
-	// pattern 18
-	u8WriteBuffer[51] = 0x44;
-	u8WriteBuffer[52] = 0x21;
-	u8WriteBuffer[53] = 0x00;
-	// pattern 19
-	u8WriteBuffer[54] = 0x48;
-	u8WriteBuffer[55] = 0x21;
-	u8WriteBuffer[56] = 0x00;
-	// pattern 20
-	u8WriteBuffer[57] = 0x4c;
-	u8WriteBuffer[58] = 0x21;
-	u8WriteBuffer[59] = 0x00;
-	// pattern 21
-	u8WriteBuffer[60] = 0x50;
-	u8WriteBuffer[61] = 0x21;
-	u8WriteBuffer[62] = 0x00;
-	// pattern 22
-	u8WriteBuffer[63] = 0x54;
-	u8WriteBuffer[64] = 0x21;
-	u8WriteBuffer[65] = 0x00;
-	// pattern 23
-	u8WriteBuffer[66] = 0x58;
-	u8WriteBuffer[67] = 0x21;
-	u8WriteBuffer[68] = 0x02;
-	// pattern 24
-	u8WriteBuffer[69] = 0x5c;
-	u8WriteBuffer[70] = 0x21;
-	u8WriteBuffer[71] = 0x02;
-	
+	u8WriteBuffer[5] = 0x00;	
 	
 	// 0x78
-	u8WriteStatus = DLPWriteByte(patternDisplayImageIndexWriteOnly, 72, &u8WriteBuffer[0]); // 0x78
+	u8WriteStatus = DLPWriteByte(patternDisplayImageIndexWriteOnly, 6, &u8WriteBuffer[0]); // 0x78
 	if (u8WriteStatus == SUCCESS)
 	{
 		//uart_puts("fill pattern data");
 		uart_puts("c\r\n");
 	}	
+	_delay_ms(100);
+	
 	// 7.d close mailbox
 	u8WriteBuffer[0] = 0x00;
 	u8WriteStatus = DLPWriteByte(patternDisplayLUTAccessWriteOnly, 1, &u8WriteBuffer[0]);  // 0x77
@@ -498,6 +422,8 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("close the mailbox for pattern");
 		uart_puts("d\r\n");
 	}
+	_delay_ms(100);
+	
 	// 7.e  write dummy data for validation
 	u8WriteBuffer[0] = 0x00;
 	u8WriteStatus = DLPWriteByte(patternDisplayValidationWrite, 1, &u8WriteBuffer[0]); // 0x7D
@@ -506,7 +432,6 @@ int  DLPPatternDisplayModeSetup()
 		//uart_puts("write dummy data for validation");
 		uart_puts("e\r\n");
 	}
-	
 	_delay_ms(1000);
 	// 8. Execute the validation command
 	
@@ -520,12 +445,13 @@ int  DLPPatternDisplayModeSetup()
 		if (validationReadResult != 0x00)
 		{
 			//return -1;
+			uart_puts("read dummy error");
 		} else {
 			uart_puts("8");
 			uart_puts("\r\n");
 		}
 	}	
-	
+	_delay_ms(100);
 	
 	// 9. Read statuses
 	
